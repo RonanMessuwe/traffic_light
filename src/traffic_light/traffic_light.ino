@@ -8,9 +8,9 @@
 #include "NoDisplay.h"
 #endif
 
-// Voir le document suivant pour les temps :
-// INSTRUCTION INTERMINISTÉRIELLE SUR LA SIGNALISATION ROUTIÈRE
-// 6ème PARTIE : Feux de circulation permanents
+// See the following document for timing specifications:
+// FRENCH ROAD SIGNALING REGULATION (IISR)
+// Part 6: Permanent traffic lights
 // https://equipementsdelaroute.cerema.fr/IMG/pdf/iisr_6epartie_vc_20220613_cle2a3ec5.pdf
 
 TrafficLight trafficLight(RED_LAMP_PIN, ORANGE_LAMP_PIN, GREEN_LAMP_PIN);
@@ -29,13 +29,13 @@ unsigned long lastDebounceTime = 0;
 
 void setup() {
   pinMode(MODE_BUTTON_PIN, INPUT_PULLUP);
-  buttonState = digitalRead(MODE_BUTTON_PIN);  // Puis lire la vraie valeur au cas où le bouton est déjà enfoncé
-  lastButtonState = buttonState;               // Synchroniser
+  buttonState = digitalRead(MODE_BUTTON_PIN);  // Read actual state in case button is already pressed
+  lastButtonState = buttonState;               // Synchronize
 
   trafficLight.begin();
   display.begin();
 
-  trafficState.setMode(0);  // Index du premier mode.
+  trafficState.setMode(0);  // Index of first mode
 }
 
 void loop() {
@@ -45,7 +45,7 @@ void loop() {
   trafficLight.apply(trafficState.current());
 
 #if USE_7_SEGMENT_DISPLAY
-  // Affiche le mode courant (1 à 8)
+  // Display current mode (1 to 8)
   display.show(trafficState.mode() + 1);
 #endif
 }
@@ -57,7 +57,7 @@ void handleButton() {
     lastDebounceTime = millis();
   }
 
-  // S'il s'est écoulé au moins DEBOUNCE_MS depuis le dernier changement d'état
+  // If at least DEBOUNCE_MS elapsed since last state change
   if ((millis() - lastDebounceTime) > DEBOUNCE_MS) {
     if (reading != buttonState) {
       buttonState = reading;

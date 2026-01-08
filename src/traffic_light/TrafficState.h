@@ -5,7 +5,7 @@ struct Step {
   bool red;
   bool orange;
   bool green;
-  unsigned long durationMs; // 0 = infini
+  unsigned long durationMs;  // 0 = infinite
 };
 
 struct Mode {
