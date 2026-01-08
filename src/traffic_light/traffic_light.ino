@@ -35,7 +35,7 @@ void setup() {
   trafficLight.begin();
   display.begin();
 
-  trafficState.setMode(0);  // Mode 1 au démarrage
+  trafficState.setMode(0);  // Index du premier mode.
 }
 
 void loop() {
