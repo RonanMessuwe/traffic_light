@@ -1,6 +1,7 @@
 #include "Config.h"
 #include "TrafficLight.h"
 #include "TrafficState.h"
+#include "Button.h"
 
 #if USE_7_SEGMENT_DISPLAY
 #include "SevenSegmentBCDDisplay.h"
@@ -15,6 +16,7 @@
 
 TrafficLight trafficLight(RED_LAMP_PIN, ORANGE_LAMP_PIN, GREEN_LAMP_PIN);
 TrafficState trafficState;
+Button modeButton(MODE_BUTTON_PIN, DEBOUNCE_MS);
 
 #if USE_7_SEGMENT_DISPLAY
 uint8_t bcdPins[4] = { CD4511_A_PIN, CD4511_B_PIN, CD4511_C_PIN, CD4511_D_PIN };  // A B C D
@@ -23,15 +25,8 @@ SevenSegmentBCDDisplay display(bcdPins);
 NoDisplay display;
 #endif
 
-int buttonState = HIGH;
-int lastButtonState = HIGH;
-unsigned long lastDebounceTime = 0;
-
 void setup() {
-  pinMode(MODE_BUTTON_PIN, INPUT_PULLUP);
-  buttonState = digitalRead(MODE_BUTTON_PIN);  // Read actual state in case button is already pressed
-  lastButtonState = buttonState;               // Synchronize
-
+  modeButton.begin();
   trafficLight.begin();
   display.begin();
 
@@ -39,7 +34,11 @@ void setup() {
 }
 
 void loop() {
-  handleButton();
+  modeButton.update();
+
+  if (modeButton.wasPressed()) {
+    trafficState.nextMode();
+  }
 
   trafficState.update();
   trafficLight.apply(trafficState.current());
@@ -48,24 +47,4 @@ void loop() {
   // Display current mode (1 to 8)
   display.show(trafficState.mode() + 1);
 #endif
-}
-
-void handleButton() {
-  int reading = digitalRead(MODE_BUTTON_PIN);
-
-  if (reading != lastButtonState) {
-    lastDebounceTime = millis();
-  }
-
-  // If at least DEBOUNCE_MS elapsed since last state change
-  if ((millis() - lastDebounceTime) > DEBOUNCE_MS) {
-    if (reading != buttonState) {
-      buttonState = reading;
-      if (buttonState == LOW) {
-        trafficState.nextMode();
-      }
-    }
-  }
-
-  lastButtonState = reading;
 }
