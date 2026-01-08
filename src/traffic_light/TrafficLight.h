@@ -16,6 +16,5 @@ class TrafficLight {
   public:
     TrafficLight(int r, int o, int g);
     void begin();
-    void set(LightColor color);
     void apply(const Step& step);
 };

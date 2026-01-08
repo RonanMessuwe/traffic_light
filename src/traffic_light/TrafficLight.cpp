@@ -10,24 +10,6 @@ void TrafficLight::begin() {
   pinMode(greenPin, OUTPUT);
 }
 
-void TrafficLight::set(LightColor color) {
-  digitalWrite(redPin, LOW);
-  digitalWrite(orangePin, LOW);
-  digitalWrite(greenPin, LOW);
-
-  switch (color) {
-    case LightColor::RED:
-      digitalWrite(redPin, HIGH);
-      break;
-    case LightColor::ORANGE:
-      digitalWrite(orangePin, HIGH);
-      break;
-    case LightColor::GREEN:
-      digitalWrite(greenPin, HIGH);
-      break;
-  }
-}
-
 void TrafficLight::apply(const Step& s) {
   digitalWrite(redPin,    s.red    ? HIGH : LOW);
   digitalWrite(orangePin, s.orange ? HIGH : LOW);
