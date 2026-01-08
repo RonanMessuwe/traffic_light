@@ -23,12 +23,14 @@ SevenSegmentBCDDisplay display(bcdPins);
 NoDisplay display;
 #endif
 
-int buttonState;
+int buttonState = HIGH;
 int lastButtonState = HIGH;
 unsigned long lastDebounceTime = 0;
 
 void setup() {
   pinMode(MODE_BUTTON_PIN, INPUT_PULLUP);
+  buttonState = digitalRead(MODE_BUTTON_PIN);  // Puis lire la vraie valeur au cas où le bouton est déjà enfoncé
+  lastButtonState = buttonState;               // Synchroniser
 
   trafficLight.begin();
   display.begin();
