@@ -9,11 +9,6 @@
 #include "NoDisplay.h"
 #endif
 
-// See the following document for timing specifications:
-// FRENCH ROAD SIGNALING REGULATION (IISR)
-// Part 6: Permanent traffic lights
-// https://equipementsdelaroute.cerema.fr/IMG/pdf/iisr_6epartie_vc_20220613_cle2a3ec5.pdf
-
 TrafficLight trafficLight(RED_LAMP_PIN, ORANGE_LAMP_PIN, GREEN_LAMP_PIN);
 TrafficState trafficState;
 Button modeButton(MODE_BUTTON_PIN, DEBOUNCE_MS);
