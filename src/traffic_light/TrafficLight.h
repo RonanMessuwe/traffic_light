@@ -1,12 +1,6 @@
 #pragma once
 #include "TrafficState.h"
 
-enum class LightColor {
-  RED,
-  ORANGE,
-  GREEN
-};
-
 class TrafficLight {
   private:
     int redPin;

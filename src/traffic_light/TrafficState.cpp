@@ -1,53 +1,66 @@
 #include "Arduino.h"
 #include "TrafficState.h"
 
+// ===== Constantes pour les états des lampes =====
+const Step RED_LIGHT    = { true,  false, false, 0 };
+const Step ORANGE_LIGHT = { false, true,  false, 0 };
+const Step GREEN_LIGHT  = { false, false, true,  0 };
+const Step RED_ORANGE   = { true,  true,  false, 0 };
+const Step ALL_LIGHTS   = { true,  true,  true,  0 };
+const Step LIGHTS_OFF   = { false, false, false, 0 };
+
+// Helper pour créer un Step avec durée personnalisée
+inline Step withDuration(const Step& base, unsigned long durationMs) {
+  return { base.red, base.orange, base.green, durationMs };
+}
+
 // ===== MODE 1 : FR / US =====
 const Step MODE_FR_US[] = {
-  { true,  false, false, 120000 },
-  { false, false, true,    6000 },
-  { false, true,  false,   3000 }
+  withDuration(RED_LIGHT,    120000),
+  withDuration(GREEN_LIGHT,    6000),
+  withDuration(ORANGE_LIGHT,   3000)
 };
 
 // ===== MODE 2 : UK =====
 const Step MODE_UK[] = {
-  { true,  false, false, 120000 },
-  { true,  true,  false,   3000 },
-  { false, false, true,    6000 },
-  { false, true,  false,   3000 }
+  withDuration(RED_LIGHT,    120000),
+  withDuration(RED_ORANGE,     3000),
+  withDuration(GREEN_LIGHT,    6000),
+  withDuration(ORANGE_LIGHT,   3000)
 };
 
 // ===== MODE 3 : ORANGE CLIGNOTANT =====
 const Step MODE_ORANGE_BLINK[] = {
-  { false, true,  false, 500 },
-  { false, false, false, 500 }
+  withDuration(ORANGE_LIGHT, 500),
+  withDuration(LIGHTS_OFF,   500)
 };
 
 // ===== MODE 4 : ROUGE FIXE =====
 const Step MODE_RED_FIXED[] = {
-  { true, false, false, 0 }
+  RED_LIGHT
 };
 
 // ===== MODE 5 : ORANGE FIXE =====
 const Step MODE_ORANGE_FIXED[] = {
-  { false, true, false, 0 }
+  ORANGE_LIGHT
 };
 
 // ===== MODE 6 : VERT FIXE =====
 const Step MODE_GREEN_FIXED[] = {
-  { false, false, true, 0 }
+  GREEN_LIGHT
 };
 
 // ===== MODE 7 : TOUT ALLUMÉ =====
 const Step MODE_ALL_ON[] = {
-  { true, true, true, 0 }
+  ALL_LIGHTS
 };
 
 // ===== MODE 8 : CHENILLARD =====
 const Step MODE_CHENILLARD[] = {
-  { true,  false, false, 500 },
-  { false, true,  false, 500 },
-  { false, false, true,  500 },
-  { false, true,  false, 500 }
+  withDuration(RED_LIGHT,    500),
+  withDuration(ORANGE_LIGHT, 500),
+  withDuration(GREEN_LIGHT,  500),
+  withDuration(ORANGE_LIGHT, 500)
 };
 
 const Mode MODES[] = {
