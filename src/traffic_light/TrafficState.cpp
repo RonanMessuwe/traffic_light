@@ -57,7 +57,7 @@ const Step MODE_ALL_ON[] = {
 };
 
 // ===== MODE 8: CHASE SEQUENCE =====
-const Step MODE_CHENILLARD[] = {
+const Step MODE_CHASE[] = {
   withDuration(RED_LIGHT,    CHASE_STEP_MS),
   withDuration(ORANGE_LIGHT, CHASE_STEP_MS),
   withDuration(GREEN_LIGHT,  CHASE_STEP_MS),
@@ -72,7 +72,7 @@ const Mode MODES[] = {
   { MODE_ORANGE_FIXED, 1 },
   { MODE_GREEN_FIXED,  1 },
   { MODE_ALL_ON,       1 },
-  { MODE_CHENILLARD,   4 }
+  { MODE_CHASE,        4 }
 };
 
 #define MODE_COUNT 8
