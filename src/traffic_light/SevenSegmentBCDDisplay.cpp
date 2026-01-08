@@ -25,8 +25,8 @@ void SevenSegmentBCDDisplay::writeBCD(uint8_t value) {
   }
 }
 
-void SevenSegmentBCDDisplay::show(int value) {
-  if (value < 0 || value > 9) return;
+void SevenSegmentBCDDisplay::show(uint8_t value) {
+  if (value > 9) return;
 
   if (useLatch) digitalWrite(latchPin, LOW);
   writeBCD(value);

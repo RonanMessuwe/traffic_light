@@ -16,5 +16,5 @@ class SevenSegmentBCDDisplay : public IDisplay {
     SevenSegmentBCDDisplay(const uint8_t pins[4], uint8_t lePin);
 
     void begin() override;
-    void show(int value) override;
+    void show(uint8_t value) override;
 };
