@@ -1,5 +1,6 @@
 #include "Arduino.h"
 #include "TrafficState.h"
+#include "Config.h"
 
 // ===== Constantes pour les états des lampes =====
 const Step RED_LIGHT    = { true,  false, false, 0 };
@@ -16,23 +17,23 @@ inline Step withDuration(const Step& base, unsigned long durationMs) {
 
 // ===== MODE 1 : FR / US =====
 const Step MODE_FR_US[] = {
-  withDuration(RED_LIGHT,    120000),
-  withDuration(GREEN_LIGHT,    6000),
-  withDuration(ORANGE_LIGHT,   3000)
+  withDuration(RED_LIGHT,    RED_DURATION_MS),
+  withDuration(GREEN_LIGHT,  GREEN_DURATION_MS),
+  withDuration(ORANGE_LIGHT, ORANGE_DURATION_MS)
 };
 
 // ===== MODE 2 : UK =====
 const Step MODE_UK[] = {
-  withDuration(RED_LIGHT,    120000),
-  withDuration(RED_ORANGE,     3000),
-  withDuration(GREEN_LIGHT,    6000),
-  withDuration(ORANGE_LIGHT,   3000)
+  withDuration(RED_LIGHT,    RED_DURATION_MS),
+  withDuration(RED_ORANGE,   UK_RED_ORANGE_MS),
+  withDuration(GREEN_LIGHT,  GREEN_DURATION_MS),
+  withDuration(ORANGE_LIGHT, ORANGE_DURATION_MS)
 };
 
 // ===== MODE 3 : ORANGE CLIGNOTANT =====
 const Step MODE_ORANGE_BLINK[] = {
-  withDuration(ORANGE_LIGHT, 500),
-  withDuration(LIGHTS_OFF,   500)
+  withDuration(ORANGE_LIGHT, BLINK_DURATION_MS),
+  withDuration(LIGHTS_OFF,   BLINK_DURATION_MS)
 };
 
 // ===== MODE 4 : ROUGE FIXE =====
@@ -57,10 +58,10 @@ const Step MODE_ALL_ON[] = {
 
 // ===== MODE 8 : CHENILLARD =====
 const Step MODE_CHENILLARD[] = {
-  withDuration(RED_LIGHT,    500),
-  withDuration(ORANGE_LIGHT, 500),
-  withDuration(GREEN_LIGHT,  500),
-  withDuration(ORANGE_LIGHT, 500)
+  withDuration(RED_LIGHT,    CHASE_STEP_MS),
+  withDuration(ORANGE_LIGHT, CHASE_STEP_MS),
+  withDuration(GREEN_LIGHT,  CHASE_STEP_MS),
+  withDuration(ORANGE_LIGHT, CHASE_STEP_MS)
 };
 
 const Mode MODES[] = {
