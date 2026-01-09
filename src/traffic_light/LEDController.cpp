@@ -7,6 +7,7 @@ LEDController::LEDController()
       flashDuration(0),
       isBlinking(false),
       blinkPeriod(0),
+      blinkHalfPeriodCache(0),
       lastBlinkToggle(0),
       blinkState(false),
       currentState(false) {
@@ -19,6 +20,7 @@ LEDController::LEDController(uint8_t pin)
       flashDuration(0),
       isBlinking(false),
       blinkPeriod(0),
+      blinkHalfPeriodCache(0),
       lastBlinkToggle(0),
       blinkState(false),
       currentState(false) {
@@ -41,7 +43,7 @@ void LEDController::update() {
     // Handle blink timing
     if (isBlinking && !isFlashing) {
         unsigned long now = millis();
-        if (now - lastBlinkToggle >= blinkPeriod / 2) {
+        if (now - lastBlinkToggle >= blinkHalfPeriodCache) {
             blinkState = !blinkState;
             writePin(blinkState);
             lastBlinkToggle = now;
@@ -74,6 +76,7 @@ void LEDController::startBlink(unsigned long period) {
     // Start blinking
     isBlinking = true;
     blinkPeriod = period;
+    blinkHalfPeriodCache = period / 2;  // Pre-calculate to avoid division in update()
     blinkState = true;
     lastBlinkToggle = millis();
     writePin(true);

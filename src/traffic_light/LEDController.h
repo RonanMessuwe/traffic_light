@@ -76,6 +76,7 @@ private:
     // Blink state
     bool isBlinking;
     unsigned long blinkPeriod;
+    unsigned long blinkHalfPeriodCache;  // Cached half-period to avoid division in loop
     unsigned long lastBlinkToggle;
     bool blinkState;
 
