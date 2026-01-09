@@ -13,7 +13,9 @@
 
 // Mode button
 #define MODE_BUTTON_PIN 8
+#define MODE_BUTTON_LED_PIN 13  // LED integrated in the mode button
 #define DEBOUNCE_MS 50
+#define MODE_BUTTON_FLASH_DURATION_MS 250  // Flash duration on mode change
 
 // 7-segment display (CD4511)
 #define CD4511_A_PIN 9

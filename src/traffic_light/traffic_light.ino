@@ -1,7 +1,7 @@
+#include "ButtonLED.h"
 #include "Config.h"
 #include "TrafficLight.h"
 #include "TrafficState.h"
-#include "Button.h"
 
 #if USE_7_SEGMENT_DISPLAY
 #include "SevenSegmentBCDDisplay.h"
@@ -11,7 +11,7 @@
 
 TrafficLight trafficLight(RED_LAMP_PIN, ORANGE_LAMP_PIN, GREEN_LAMP_PIN);
 TrafficState trafficState;
-Button modeButton(MODE_BUTTON_PIN, DEBOUNCE_MS);
+ButtonLED modeButton(MODE_BUTTON_PIN, MODE_BUTTON_LED_PIN, DEBOUNCE_MS);
 
 #if USE_7_SEGMENT_DISPLAY
 uint8_t bcdPins[4] = { CD4511_A_PIN, CD4511_B_PIN, CD4511_C_PIN, CD4511_D_PIN };  // A B C D
@@ -33,6 +33,7 @@ void loop() {
 
   if (modeButton.wasPressed()) {
     trafficState.nextMode();
+    modeButton.flash(MODE_BUTTON_FLASH_DURATION_MS);
   }
 
   trafficState.update();
