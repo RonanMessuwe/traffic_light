@@ -8,7 +8,9 @@ Arduino-based traffic light controller with 8 operating modes, compliant with Fr
 - ✅ **Regulatory Compliance** - Follows IISR (French Road Signaling Regulation) Part 6
 - ✅ **7-Segment Display** - Optional mode display via CD4511 BCD decoder
 - ✅ **Debounced Button** - Mode selection with proper debouncing
+- ✅ **LED Feedback** - Visual confirmation on mode change with button LED flash
 - ✅ **Modular Architecture** - Clean separation of concerns with classes
+- ✅ **Reusable Button Library** - Button, ButtonLED, ButtonMultiLED with flash, blink, and chase effects
 - ✅ **Configurable Timings** - Easy configuration via `Config.h`
 
 ## Regulatory Reference
@@ -28,7 +30,7 @@ This project implements timing specifications from the **INSTRUCTION INTERMINIST
 ### Components
 - Arduino board (Uno, Nano, or compatible)
 - Traffic light with 3 LEDs (Red, Orange, Green)
-- Push button (mode selection)
+- Push button (simple Button) or button with integrated LED (ButtonLED) for mode selection
 - Optional: 7-segment display with CD4511 BCD decoder
 
 ### Pin Assignments
@@ -39,6 +41,7 @@ This project implements timing specifications from the **INSTRUCTION INTERMINIST
 | Orange lamp | 3 | Digital output |
 | Green lamp | 4 | Digital output |
 | Mode button | 8 | INPUT_PULLUP |
+| Button LED | 13 | Digital output (optional, for ButtonLED) |
 | Display A | 9 | BCD bit 0 |
 | Display B | 10 | BCD bit 1 |
 | Display C | 11 | BCD bit 2 |
@@ -99,17 +102,29 @@ Animation mode:
 │ + apply()    │     │ + nextMode() │     │ + update()   │
 └──────────────┘     │ + update()   │     │ + wasPressed()│
                      │ + current()  │     └──────────────┘
-                     └──────────────┘
-                            ▲
-                            │
-                     ┌──────┴──────┐
-                     │    Step     │
-                     ├─────────────┤
-                     │ - red       │
-                     │ - orange    │
-                     │ - green     │
-                     │ - durationMs│
-                     └─────────────┘
+                     └──────────────┘              ▲
+                            ▲                      │
+                            │              ┌───────┴───────┐
+                     ┌──────┴──────┐       │               │
+                     │    Step     │  ┌────┴─────┐  ┌──────┴───────┐
+                     ├─────────────┤  │ ButtonLED│  │ButtonMultiLED│
+                     │ - red       │  ├──────────┤  ├──────────────┤
+                     │ - orange    │  │+ flash() │  │+ flash(idx)  │
+                     │ - green     │  │+ blink() │  │+ setExclusive│
+                     │ - durationMs│  └──────────┘  │+ chase()     │
+                     └─────────────┘       │        └──────────────┘
+                                           │              │
+                                      ┌────┴──────────────┴────┐
+                                      │   LEDController        │
+                                      ├────────────────────────┤
+                                      │ - pin                  │
+                                      │ - isFlashing           │
+                                      │ - isBlinking           │
+                                      ├────────────────────────┤
+                                      │ + set()                │
+                                      │ + flash()              │
+                                      │ + startBlink()         │
+                                      └────────────────────────┘
 
 ┌──────────────┐
 │  IDisplay    │ (interface)
@@ -146,6 +161,9 @@ traffic_light/
         ├── TrafficLight.h/cpp        # LED control
         ├── TrafficState.h/cpp        # State machine & modes
         ├── Button.h/cpp              # Button with debouncing
+        ├── ButtonLED.h/cpp           # Button with single LED feedback
+        ├── ButtonMultiLED.h/cpp      # Button with multiple LEDs
+        ├── LEDController.h/cpp       # LED timing controller
         ├── IDisplay.h                # Display interface
         ├── SevenSegmentBCDDisplay.h/cpp  # 7-segment implementation
         └── NoDisplay.h               # Null display implementation
@@ -166,6 +184,7 @@ Pin assignments:
 #define ORANGE_LAMP_PIN 3
 #define GREEN_LAMP_PIN 4
 #define MODE_BUTTON_PIN 8
+#define MODE_BUTTON_LED_PIN 13  // For ButtonLED
 ```
 
 ### Timing Configuration (`Config.h`)
@@ -216,6 +235,7 @@ pio run --target upload
 
 ### Button Behavior
 - **Short press** - Switch to next mode
+- **LED flash** - 250ms visual feedback on mode change (when using ButtonLED)
 - **Debounce time** - 50ms (configurable in `Config.h`)
 
 ## Technical Details
@@ -263,17 +283,51 @@ const Mode MODES[] = {
 ### Adding Multiple Buttons
 
 ```cpp
-Button modeButton(MODE_BUTTON_PIN, DEBOUNCE_MS);
+ButtonLED modeButton(MODE_BUTTON_PIN, MODE_LED_PIN, DEBOUNCE_MS);
 Button pauseButton(PAUSE_BUTTON_PIN, DEBOUNCE_MS);
 
 void loop() {
   modeButton.update();
   pauseButton.update();
 
-  if (modeButton.wasPressed()) trafficState.nextMode();
+  if (modeButton.wasPressed()) {
+    trafficState.nextMode();
+    modeButton.flash(250);  // Visual feedback
+  }
   if (pauseButton.wasPressed()) { /* pause logic */ }
   // ...
 }
+```
+
+### Button Classes Overview
+
+**Button** - Simple debounced button:
+```cpp
+Button btn(8, 50);  // pin 8, 50ms debounce
+btn.begin();
+btn.update();
+if (btn.wasPressed()) { /* action */ }
+```
+
+**ButtonLED** - Button with single LED:
+```cpp
+ButtonLED btn(8, 13, 50);  // button pin 8, LED pin 13, 50ms debounce
+btn.begin();
+btn.update();
+if (btn.wasPressed()) btn.flash(250);  // Flash on press
+btn.startBlink(1000);  // Continuous blink (1 Hz)
+btn.setLED(true);  // Direct control
+```
+
+**ButtonMultiLED** - Button with multiple LEDs:
+```cpp
+uint8_t ledPins[] = {5, 6, 7};  // RGB LEDs
+ButtonMultiLED btn(8, ledPins, 3, 50);
+btn.begin();
+btn.update();
+btn.setExclusiveLED(0);  // Turn on LED 0, turn off others
+btn.flash(1, 250);  // Flash LED 1
+btn.startChase(200);  // Sequential chase pattern
 ```
 
 ## License
