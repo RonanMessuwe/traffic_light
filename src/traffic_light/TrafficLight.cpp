@@ -15,9 +15,3 @@ void TrafficLight::apply(const Step& s) {
   digitalWrite(orangePin, s.orange ? HIGH : LOW);
   digitalWrite(greenPin,  s.green  ? HIGH : LOW);
 }
-
-void TrafficLight::allOff() {
-  digitalWrite(redPin, LOW);
-  digitalWrite(orangePin, LOW);
-  digitalWrite(greenPin, LOW);
-}

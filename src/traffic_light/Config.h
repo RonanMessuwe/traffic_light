@@ -14,7 +14,6 @@
 // Mode button
 #define MODE_BUTTON_PIN 8
 #define DEBOUNCE_MS 50
-#define MODE_CHANGE_FEEDBACK_MS 250  // Visual feedback duration when changing mode
 
 // 7-segment display (CD4511)
 #define CD4511_A_PIN 9

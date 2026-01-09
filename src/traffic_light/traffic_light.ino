@@ -32,10 +32,6 @@ void loop() {
   modeButton.update();
 
   if (modeButton.wasPressed()) {
-    // Visual feedback: turn off all lights briefly
-    trafficLight.allOff();
-    delay(MODE_CHANGE_FEEDBACK_MS);
-
     trafficState.nextMode();
   }
 
