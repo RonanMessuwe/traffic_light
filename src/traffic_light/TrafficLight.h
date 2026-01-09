@@ -11,4 +11,5 @@ class TrafficLight {
     TrafficLight(int r, int o, int g);
     void begin();
     void apply(const Step& step);
+    void allOff();
 };
