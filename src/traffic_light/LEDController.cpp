@@ -1,5 +1,17 @@
 #include "LEDController.h"
 
+LEDController::LEDController()
+    : pin(0),
+      isFlashing(false),
+      flashStartTime(0),
+      flashDuration(0),
+      isBlinking(false),
+      blinkPeriod(0),
+      lastBlinkToggle(0),
+      blinkState(false),
+      currentState(false) {
+}
+
 LEDController::LEDController(uint8_t pin)
     : pin(pin),
       isFlashing(false),

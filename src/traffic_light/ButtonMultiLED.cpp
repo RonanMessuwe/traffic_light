@@ -1,34 +1,26 @@
 #include "ButtonMultiLED.h"
 
-ButtonMultiLED::ButtonMultiLED(uint8_t buttonPin, const uint8_t* ledPins, uint8_t ledCount, uint16_t debounceDelay)
+ButtonMultiLED::ButtonMultiLED(uint8_t buttonPin, const uint8_t* pins, uint8_t count, uint16_t debounceDelay)
     : Button(buttonPin, debounceDelay),
-      ledCount(ledCount),
+      ledCount(count > MAX_LEDS ? MAX_LEDS : count),  // Clamp to MAX_LEDS
       isChasing(false),
       chaseStepDuration(0),
       lastChaseStep(0),
       currentChaseIndex(0) {
 
-    // Dynamically allocate array of LEDController pointers
-    leds = new LEDController*[ledCount];
-
-    // Create LEDController for each LED
+    // Store pins for initialization in begin()
     for (uint8_t i = 0; i < ledCount; i++) {
-        leds[i] = new LEDController(ledPins[i]);
+        ledPins[i] = pins[i];
     }
-}
-
-ButtonMultiLED::~ButtonMultiLED() {
-    // Clean up dynamically allocated memory
-    for (uint8_t i = 0; i < ledCount; i++) {
-        delete leds[i];
-    }
-    delete[] leds;
 }
 
 void ButtonMultiLED::begin() {
     Button::begin();
+
+    // Initialize each LEDController with its pin
     for (uint8_t i = 0; i < ledCount; i++) {
-        leds[i]->begin();
+        leds[i] = LEDController(ledPins[i]);
+        leds[i].begin();
     }
 }
 
@@ -42,7 +34,7 @@ void ButtonMultiLED::update() {
 
     // Update all LEDs
     for (uint8_t i = 0; i < ledCount; i++) {
-        leds[i]->update();
+        leds[i].update();
     }
 }
 
@@ -52,7 +44,7 @@ void ButtonMultiLED::setLED(uint8_t index, bool state) {
     if (index < ledCount) {
         // Stop chase if manual control is requested
         isChasing = false;
-        leds[index]->set(state);
+        leds[index].set(state);
     }
 }
 
@@ -63,7 +55,7 @@ void ButtonMultiLED::setExclusiveLED(uint8_t index) {
 
         // Turn off all LEDs, then turn on the selected one
         for (uint8_t i = 0; i < ledCount; i++) {
-            leds[i]->set(i == index);
+            leds[i].set(i == index);
         }
     }
 }
@@ -72,7 +64,7 @@ void ButtonMultiLED::flash(uint8_t index, unsigned long duration) {
     if (index < ledCount) {
         // Stop chase if manual control is requested
         isChasing = false;
-        leds[index]->flash(duration);
+        leds[index].flash(duration);
     }
 }
 
@@ -80,19 +72,19 @@ void ButtonMultiLED::startBlink(uint8_t index, unsigned long period) {
     if (index < ledCount) {
         // Stop chase if manual control is requested
         isChasing = false;
-        leds[index]->startBlink(period);
+        leds[index].startBlink(period);
     }
 }
 
 void ButtonMultiLED::stopBlink(uint8_t index) {
     if (index < ledCount) {
-        leds[index]->stopBlink();
+        leds[index].stopBlink();
     }
 }
 
 bool ButtonMultiLED::getLEDState(uint8_t index) const {
     if (index < ledCount) {
-        return leds[index]->getState();
+        return leds[index].getState();
     }
     return false;
 }
@@ -104,7 +96,7 @@ void ButtonMultiLED::setAllLEDs(bool state) {
     isChasing = false;
 
     for (uint8_t i = 0; i < ledCount; i++) {
-        leds[i]->set(state);
+        leds[i].set(state);
     }
 }
 
@@ -113,13 +105,13 @@ void ButtonMultiLED::flashAll(unsigned long duration) {
     isChasing = false;
 
     for (uint8_t i = 0; i < ledCount; i++) {
-        leds[i]->flash(duration);
+        leds[i].flash(duration);
     }
 }
 
 void ButtonMultiLED::stopAllBlink() {
     for (uint8_t i = 0; i < ledCount; i++) {
-        leds[i]->stopBlink();
+        leds[i].stopBlink();
     }
 }
 
@@ -137,7 +129,7 @@ void ButtonMultiLED::startChase(unsigned long stepDuration) {
     lastChaseStep = millis();
 
     // Light up first LED
-    leds[0]->set(true);
+    leds[0].set(true);
 }
 
 void ButtonMultiLED::stopChase() {
@@ -150,13 +142,13 @@ void ButtonMultiLED::updateChase() {
 
     if (now - lastChaseStep >= chaseStepDuration) {
         // Turn off current LED
-        leds[currentChaseIndex]->set(false);
+        leds[currentChaseIndex].set(false);
 
         // Move to next LED
         currentChaseIndex = (currentChaseIndex + 1) % ledCount;
 
         // Turn on next LED
-        leds[currentChaseIndex]->set(true);
+        leds[currentChaseIndex].set(true);
 
         lastChaseStep = now;
     }

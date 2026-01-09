@@ -319,9 +319,9 @@ btn.startBlink(1000);  // Continuous blink (1 Hz)
 btn.setLED(true);  // Direct control
 ```
 
-**ButtonMultiLED** - Button with multiple LEDs:
+**ButtonMultiLED** - Button with multiple LEDs (max 3):
 ```cpp
-uint8_t ledPins[] = {5, 6, 7};  // RGB LEDs
+uint8_t ledPins[] = {5, 6, 7};  // RGB LEDs (max 3 LEDs supported)
 ButtonMultiLED btn(8, ledPins, 3, 50);
 btn.begin();
 btn.update();

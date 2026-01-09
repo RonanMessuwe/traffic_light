@@ -14,18 +14,18 @@
 class ButtonMultiLED : public Button {
 public:
     /**
+     * Maximum number of LEDs supported
+     */
+    static constexpr uint8_t MAX_LEDS = 3;
+
+    /**
      * Constructor
      * @param buttonPin GPIO pin for the button
      * @param ledPins Array of GPIO pins for the LEDs
-     * @param ledCount Number of LEDs
+     * @param ledCount Number of LEDs (max MAX_LEDS)
      * @param debounceDelay Debounce delay in milliseconds (default: 50ms)
      */
     ButtonMultiLED(uint8_t buttonPin, const uint8_t* ledPins, uint8_t ledCount, uint16_t debounceDelay = 50);
-
-    /**
-     * Destructor - cleanup dynamically allocated memory
-     */
-    ~ButtonMultiLED();
 
     /**
      * Initialize button and all LEDs
@@ -120,7 +120,8 @@ public:
     uint8_t getLEDCount() const;
 
 private:
-    LEDController** leds;
+    LEDController leds[MAX_LEDS];  // Stack-allocated array
+    uint8_t ledPins[MAX_LEDS];     // Store pins for initialization
     uint8_t ledCount;
 
     // Chase state

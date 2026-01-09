@@ -14,6 +14,11 @@
 class LEDController {
 public:
     /**
+     * Default constructor (for array initialization)
+     */
+    LEDController();
+
+    /**
      * Constructor
      * @param pin GPIO pin for the LED
      */
