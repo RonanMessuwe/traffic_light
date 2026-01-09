@@ -1,7 +1,7 @@
 #include "Arduino.h"
 #include "TrafficLight.h"
 
-TrafficLight::TrafficLight(int r, int o, int g)
+TrafficLight::TrafficLight(uint8_t r, uint8_t o, uint8_t g)
   : redPin(r), orangePin(o), greenPin(g) {}
 
 void TrafficLight::begin() {
