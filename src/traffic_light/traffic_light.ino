@@ -20,10 +20,6 @@ SevenSegmentBCDDisplay display(bcdPins);
 NoDisplay display;
 #endif
 
-// Visual feedback state
-bool feedbackInProgress = false;
-unsigned long feedbackStartTime = 0;
-
 void setup() {
   modeButton.begin();
   trafficLight.begin();
@@ -35,24 +31,16 @@ void setup() {
 void loop() {
   modeButton.update();
 
-  // Check if button was pressed and no feedback is in progress
-  if (modeButton.wasPressed() && !feedbackInProgress) {
-    feedbackInProgress = true;
-    feedbackStartTime = millis();
+  if (modeButton.wasPressed()) {
+    // Visual feedback: turn off all lights briefly
     trafficLight.allOff();
-  }
+    delay(MODE_CHANGE_FEEDBACK_MS);
 
-  // Check if feedback duration has elapsed
-  if (feedbackInProgress && (millis() - feedbackStartTime >= MODE_CHANGE_FEEDBACK_MS)) {
-    feedbackInProgress = false;
     trafficState.nextMode();
   }
 
-  // Normal operation: update state and apply current step
-  if (!feedbackInProgress) {
-    trafficState.update();
-    trafficLight.apply(trafficState.current());
-  }
+  trafficState.update();
+  trafficLight.apply(trafficState.current());
 
 #if USE_7_SEGMENT_DISPLAY
   // Display current mode (1 to 8)
