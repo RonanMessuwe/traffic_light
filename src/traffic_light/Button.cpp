@@ -18,7 +18,7 @@ void Button::begin() {
 }
 
 void Button::update() {
-  int reading = digitalRead(pin);
+  uint8_t reading = digitalRead(pin);
 
   // Reset debounce timer on state change
   if (reading != lastReading) {

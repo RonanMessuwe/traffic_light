@@ -6,8 +6,8 @@ class Button {
     uint8_t pin;
     uint16_t debounceMs;
 
-    int currentState;
-    int lastReading;
+    uint8_t currentState;
+    uint8_t lastReading;
     unsigned long lastDebounceTime;
 
     bool pressedFlag;  // Flag to detect a new press
