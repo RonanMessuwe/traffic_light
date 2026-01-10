@@ -180,26 +180,26 @@ Enable/disable 7-segment display:
 
 Pin assignments:
 ```cpp
-#define RED_LAMP_PIN 2
-#define ORANGE_LAMP_PIN 3
-#define GREEN_LAMP_PIN 4
-#define MODE_BUTTON_PIN 8
-#define MODE_BUTTON_LED_PIN 13  // For ButtonLED
+constexpr uint8_t RED_LAMP_PIN = 2;
+constexpr uint8_t ORANGE_LAMP_PIN = 3;
+constexpr uint8_t GREEN_LAMP_PIN = 4;
+constexpr uint8_t MODE_BUTTON_PIN = 8;
+constexpr uint8_t MODE_BUTTON_LED_PIN = 13;  // For ButtonLED
 ```
 
 ### Timing Configuration (`Config.h`)
 
 Regulatory durations:
 ```cpp
-#define RED_DURATION_MS    120000  // 2 minutes
-#define GREEN_DURATION_MS    6000  // 6 seconds
-#define ORANGE_DURATION_MS   3000  // 3 seconds
+constexpr unsigned long RED_DURATION_MS = 120000;  // 2 minutes
+constexpr unsigned long GREEN_DURATION_MS = 6000;  // 6 seconds
+constexpr unsigned long ORANGE_DURATION_MS = 3000;  // 3 seconds
 ```
 
 Animation durations:
 ```cpp
-#define BLINK_DURATION_MS  500  // Blink rate
-#define CHASE_STEP_MS      500  // Chase animation speed
+constexpr unsigned long BLINK_DURATION_MS = 500;  // Blink rate
+constexpr unsigned long CHASE_STEP_MS = 500;  // Chase animation speed
 ```
 
 ## Building & Installation
@@ -241,8 +241,14 @@ pio run --target upload
 ## Technical Details
 
 ### Memory Usage
-Estimated RAM usage: ~200 bytes
+Estimated RAM usage: ~200 bytes (optimized with PROGMEM for mode data)
 Flash (program) usage: ~2-3 KB
+
+**Memory Optimizations:**
+- Mode data stored in Flash (PROGMEM) instead of RAM (~378 bytes saved)
+- `constexpr` constants for compile-time evaluation (0 RAM usage)
+- Optimized types: `uint8_t` for pins and small values
+- Division caching in LED blink logic for performance
 
 ### Timing Precision
 - Uses `millis()` for timing (1ms resolution)
@@ -261,7 +267,7 @@ Flash (program) usage: ~2-3 KB
 
 1. Define the mode sequence in `TrafficState.cpp`:
 ```cpp
-const Step MODE_NEW[] = {
+const Step MODE_NEW[] PROGMEM = {
   withDuration(RED_LIGHT, 5000),
   withDuration(GREEN_LIGHT, 3000)
 };
@@ -269,7 +275,7 @@ const Step MODE_NEW[] = {
 
 2. Add to `MODES` array:
 ```cpp
-const Mode MODES[] = {
+const Mode MODES[] PROGMEM = {
   // ... existing modes ...
   { MODE_NEW, 2 }
 };
@@ -277,7 +283,7 @@ const Mode MODES[] = {
 
 3. Update `MODE_COUNT`:
 ```cpp
-#define MODE_COUNT 9  // Was 8
+constexpr uint8_t MODE_COUNT = 9;  // Was 8
 ```
 
 ### Adding Multiple Buttons
