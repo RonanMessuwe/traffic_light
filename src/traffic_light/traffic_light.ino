@@ -14,7 +14,7 @@ TrafficState trafficState;
 ButtonLED modeButton(MODE_BUTTON_PIN, MODE_BUTTON_LED_PIN, DEBOUNCE_MS);
 
 #if USE_7_SEGMENT_DISPLAY
-uint8_t bcdPins[4] = { CD4511_A_PIN, CD4511_B_PIN, CD4511_C_PIN, CD4511_D_PIN };  // A B C D
+uint8_t bcdPins[4] = { CD4511_A_PIN, CD4511_B_PIN, CD4511_C_PIN, CD4511_D_PIN };
 SevenSegmentBCDDisplay display(bcdPins);
 #else
 NoDisplay display;
@@ -40,7 +40,6 @@ void loop() {
   trafficLight.apply(trafficState.current());
 
 #if USE_7_SEGMENT_DISPLAY
-  // Display current mode (1 to 8)
   display.show(trafficState.mode() + 1);
 #endif
 }

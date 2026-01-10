@@ -77,7 +77,7 @@ const Mode MODES[] PROGMEM = {
   { MODE_CHASE,        4 }
 };
 
-#define MODE_COUNT 8
+constexpr uint8_t MODE_COUNT = 8;
 
 TrafficState::TrafficState() {
   currentMode = 0;
